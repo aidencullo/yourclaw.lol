@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>yourclaw.ai — Your OpenClaw, hosted</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #0a0a0a;
+      color: #e5e5e5;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .container {
+      text-align: center;
+      max-width: 480px;
+      padding: 2rem;
+    }
+
+    .logo {
+      font-size: 3rem;
+      margin-bottom: 0.25rem;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: #ffffff;
+      letter-spacing: -0.02em;
+    }
+
+    .tagline {
+      font-size: 1.1rem;
+      color: #737373;
+      margin-top: 0.75rem;
+      margin-bottom: 3rem;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 0.35rem 1rem;
+      background: #1a1a1a;
+      border: 1px solid #262626;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      color: #a3a3a3;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 2rem;
+    }
+
+    .access-form {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+
+    input {
+      flex: 1;
+      padding: 0.85rem 1.1rem;
+      background: #141414;
+      border: 1px solid #262626;
+      border-radius: 12px;
+      color: #ffffff;
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    input::placeholder {
+      color: #525252;
+    }
+
+    input:focus {
+      border-color: #404040;
+    }
+
+    button {
+      padding: 0.85rem 1.5rem;
+      background: #ffffff;
+      color: #0a0a0a;
+      border: none;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+      white-space: nowrap;
+    }
+
+    button:hover {
+      background: #d4d4d4;
+    }
+
+    .footer {
+      margin-top: 3rem;
+      font-size: 0.85rem;
+      color: #404040;
+    }
+
+    .footer a {
+      color: #525252;
+      text-decoration: none;
+    }
+
+    .footer a:hover {
+      color: #737373;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="logo">🦞</div>
+    <h1>yourclaw.ai</h1>
+    <p class="tagline">OpenClaw on the web. We handle the infra.</p>
+
+    <span class="badge">Coming Soon</span>
+
+    <div class="access-form">
+      <input type="text" placeholder="Enter access code" id="code">
+      <button onclick="document.getElementById('code').value = ''">Submit</button>
+    </div>
+
+    <p class="footer">
+      Built on <a href="https://github.com/openclaw/openclaw" target="_blank">OpenClaw</a>
+    </p>
+  </div>
+</body>
+</html>
