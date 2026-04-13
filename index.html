@@ -22,52 +22,52 @@
       position: fixed;
       inset: 0;
       z-index: 0;
-      overflow: hidden;
     }
 
     .orb {
       position: absolute;
       border-radius: 50%;
-      filter: blur(120px);
-      opacity: 0.4;
+      filter: blur(140px);
       animation: drift 20s ease-in-out infinite alternate;
     }
 
     .orb-1 {
-      width: 600px;
-      height: 600px;
-      background: #e44d26;
-      top: -200px;
-      right: -100px;
+      width: 500px;
+      height: 500px;
+      background: #dc2626;
+      opacity: 0.25;
+      top: -150px;
+      right: -50px;
       animation-duration: 18s;
     }
 
     .orb-2 {
-      width: 500px;
-      height: 500px;
-      background: #7c3aed;
-      bottom: -150px;
-      left: -100px;
+      width: 400px;
+      height: 400px;
+      background: #991b1b;
+      opacity: 0.3;
+      bottom: -100px;
+      left: -50px;
       animation-duration: 22s;
       animation-delay: -5s;
     }
 
     .orb-3 {
-      width: 400px;
-      height: 400px;
-      background: #06b6d4;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
+      width: 300px;
+      height: 300px;
+      background: #b91c1c;
+      opacity: 0.15;
+      top: 40%;
+      left: 55%;
       animation-duration: 25s;
       animation-delay: -10s;
     }
 
     @keyframes drift {
       0% { transform: translate(0, 0) scale(1); }
-      33% { transform: translate(40px, -30px) scale(1.05); }
-      66% { transform: translate(-30px, 40px) scale(0.95); }
-      100% { transform: translate(20px, 20px) scale(1.02); }
+      33% { transform: translate(50px, -40px) scale(1.08); }
+      66% { transform: translate(-40px, 50px) scale(0.92); }
+      100% { transform: translate(30px, 20px) scale(1.04); }
     }
 
     .container {
@@ -78,59 +78,69 @@
     }
 
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
+      from { opacity: 0; transform: translateY(24px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
-    .tagline {
-      font-size: 1.4rem;
-      color: #a3a3a3;
-      font-weight: 300;
-      margin-bottom: 3rem;
-      letter-spacing: 0.02em;
+    h1 {
+      font-size: 3.5rem;
+      font-weight: 700;
+      color: #ffffff;
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+      margin-bottom: 0.3rem;
     }
 
-    .tagline strong {
-      color: #ffffff;
-      font-weight: 600;
+    h1 span {
+      display: block;
+      font-weight: 300;
+      color: #737373;
+    }
+
+    .subtitle {
+      font-size: 1.05rem;
+      color: #737373;
+      margin-top: 1.2rem;
+      margin-bottom: 2.5rem;
+      line-height: 1.6;
     }
 
     .cta {
       display: inline-flex;
       align-items: center;
       gap: 0.6rem;
-      padding: 1rem 2.2rem;
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.12);
+      padding: 0.9rem 2rem;
+      background: #dc2626;
       color: #ffffff;
-      border-radius: 14px;
+      border: none;
+      border-radius: 12px;
       font-size: 1.05rem;
-      font-weight: 500;
+      font-weight: 600;
       cursor: pointer;
-      transition: all 0.3s ease;
-      backdrop-filter: blur(12px);
+      transition: all 0.25s ease;
+      letter-spacing: 0.01em;
     }
 
     .cta:hover {
-      background: rgba(255, 255, 255, 0.14);
-      border-color: rgba(255, 255, 255, 0.25);
-      transform: translateY(-1px);
+      background: #ef4444;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(220, 38, 38, 0.3);
     }
 
     .cta .arrow {
-      transition: transform 0.3s ease;
+      transition: transform 0.25s ease;
+      font-size: 1.2rem;
     }
 
     .cta:hover .arrow {
       transform: translateX(3px);
     }
 
-    .beta {
-      margin-top: 2rem;
-      font-size: 0.75rem;
+    .note {
+      margin-top: 1.5rem;
+      font-size: 0.8rem;
       color: #525252;
-      text-transform: uppercase;
-      letter-spacing: 0.15em;
+      letter-spacing: 0.03em;
     }
   </style>
 </head>
@@ -141,10 +151,12 @@
     <div class="orb orb-3"></div>
   </div>
   <div class="container">
-    <p class="tagline"><strong>Your own Claude instance.</strong> One click. No setup.</p>
+    <h1>Deploy <span>your clawd</span></h1>
+    <p class="subtitle">Your own Claude instance. One click, zero config.</p>
     <button class="cta">
-      Try it now <span class="arrow">&rarr;</span>
+      Start building <span class="arrow">&rarr;</span>
     </button>
+    <p class="note">Your own AI infrastructure &middot; Ready in minutes</p>
   </div>
 </body>
 </html>
