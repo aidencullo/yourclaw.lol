@@ -1,25 +1,29 @@
 # yourclaw.lol
 
-One-click OpenClaw instances. You click, we provision.
+Get a personal AI assistant in one click, powered by [OpenClaw](https://github.com/openclaw/openclaw).
 
 ## What is this?
 
-[OpenClaw](https://github.com/openclaw/openclaw) is a personal AI assistant you run on your own devices. It's powerful but complex to set up.
+[OpenClaw](https://docs.openclaw.ai) is an open-source personal AI assistant that connects to the channels you already use — WhatsApp, Telegram, Slack, Discord, and more. It's powerful, but setting it up takes effort.
 
-**yourclaw.lol** removes the friction — click a button, get a fully configured OpenClaw instance running on its own VPS. No terminal, no Docker, no config files.
+**yourclaw.lol** removes the friction. Click a button, get a fully configured OpenClaw instance. No terminal, no Docker, no config files.
+
+## How it works
+
+1. Visit [yourclaw.lol](http://yourclaw.lol)
+2. Click "Get an assistant"
+3. Get your own OpenClaw instance, ready to go
 
 ## Stack
 
-- Static landing page hosted on GitHub Pages
-- Domain: `yourclaw.lol` (Hostinger, DNS pointed to GitHub Pages)
-- Provisioning backend: Hostinger VPS API (coming soon)
+- Landing page on [GitHub Pages](https://pages.github.com/)
+- Domain: `yourclaw.lol` (Hostinger DNS → GitHub Pages)
+- CI: [Claude Code Action](https://github.com/anthropics/claude-code-action) + [Greptile](https://greptile.com) for PR reviews
+- Provisioning: Hostinger VPS API (coming soon)
 
-## Development
+## Contributing
 
-```bash
-# serve locally
-open index.html
-```
+PRs welcome. Greptile and Claude will automatically review them.
 
 ## License
 
