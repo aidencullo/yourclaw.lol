@@ -27,7 +27,7 @@ export default function Home() {
       <div className="text-center max-w-md px-6">
         <h1 className="text-5xl font-bold text-gray-900 mb-4">YourClaude</h1>
         <p className="text-xl text-gray-500 mb-10">
-          Your personal Claude, one click away.
+          Get an immediate OpenClaw instance.
         </p>
         <button
           onClick={() => signIn("google")}
