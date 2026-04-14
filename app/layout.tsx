@@ -3,8 +3,8 @@ import { SessionProvider } from "next-auth/react";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "YourClaude",
-  description: "Your personal Claude, one click away",
+  title: "yourclaw.lol",
+  description: "One-click OpenClaw instances, provisioned on Fly.io",
 };
 
 export default function RootLayout({
