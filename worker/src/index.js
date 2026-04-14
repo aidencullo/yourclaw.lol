@@ -51,11 +51,18 @@ export default {
       return json({ error: data.error || "Fly create failed" }, res.status);
     }
 
+    // Wait for the machine to be started before returning
+    await fetch(
+      `${FLY_API}/apps/${FLY_APP}/machines/${data.id}/wait?state=started&timeout=30`,
+      { headers: { Authorization: `Bearer ${env.FLY_API_TOKEN}` } }
+    );
+
     return json({
       id: data.id,
       name: data.name,
-      state: data.state,
+      state: "started",
       region: data.region,
+      url: `https://${FLY_APP}.fly.dev/`,
     });
   },
 };
