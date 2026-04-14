@@ -10,9 +10,10 @@ One-click OpenClaw instances. You click, we provision.
 
 ## Stack
 
-- Static landing page hosted on GitHub Pages
-- Domain: `yourclaw.lol` (Hostinger, DNS pointed to GitHub Pages)
-- Provisioning backend: Hostinger VPS API (coming soon)
+- Next.js control plane deployed on Fly.io
+- Domain: `yourclaw.lol`
+- Provisioning backend: Fly Machines API
+- Spawned runtime: `ghcr.io/openclaw/openclaw:latest`
 
 ## Development
 
