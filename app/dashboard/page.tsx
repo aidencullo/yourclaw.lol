@@ -104,8 +104,33 @@ export default function Dashboard() {
 
   const firstName = session?.user?.name?.split(" ")[0] || "there";
 
+  const isBooting =
+    provisioning ||
+    (machine !== null && status !== "started" && status !== "stopped");
+
   return (
     <div className="min-h-screen bg-[#050505] text-[#e5e5e5] flex flex-col">
+      <style>{`
+        @keyframes lobster-dance {
+          0%   { transform: rotate(-15deg) translateY(0)    scale(1); }
+          25%  { transform: rotate(15deg)  translateY(-20px) scale(1.1); }
+          50%  { transform: rotate(-10deg) translateY(0)    scale(1); }
+          75%  { transform: rotate(10deg)  translateY(-15px) scale(1.05); }
+          100% { transform: rotate(-15deg) translateY(0)    scale(1); }
+        }
+        @keyframes lobster-pulse {
+          0%, 100% { opacity: 0.4; }
+          50%      { opacity: 0.8; }
+        }
+        .lobster-dance {
+          animation: lobster-dance 0.9s ease-in-out infinite;
+          display: inline-block;
+          filter: drop-shadow(0 0 30px rgba(220, 38, 38, 0.5));
+        }
+        .booting-text {
+          animation: lobster-pulse 1.6s ease-in-out infinite;
+        }
+      `}</style>
       {/* Header */}
       <header className="border-b border-[#222] px-6 py-4 flex items-center justify-between">
         <h1 className="text-xl font-semibold text-white">yourclaw.lol</h1>
@@ -132,6 +157,24 @@ export default function Dashboard() {
         <div className="text-center max-w-lg px-6">
           {loading ? (
             <div className="text-[#666] text-lg">Checking your instance...</div>
+          ) : isBooting ? (
+            /* Dancing lobster while we provision/boot */
+            <>
+              <div className="text-9xl mb-8 lobster-dance" aria-hidden>
+                🦞
+              </div>
+              <h2 className="text-3xl font-bold text-white mb-2">
+                Cooking up your claw
+              </h2>
+              <p className="booting-text text-[#888] text-lg">
+                {provisioning
+                  ? "Provisioning your instance..."
+                  : `Booting (${status})...`}
+              </p>
+              {error && (
+                <p className="mt-4 text-[#dc2626] text-sm">{error}</p>
+              )}
+            </>
           ) : status === "none" ? (
             /* No instance — show provision button */
             <>
@@ -144,20 +187,10 @@ export default function Dashboard() {
               </p>
               <button
                 onClick={handleProvision}
-                disabled={provisioning}
-                className="inline-flex items-center gap-2 px-8 py-4 bg-[#dc2626] text-white text-lg font-semibold rounded-xl hover:bg-[#ef4444] transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed hover:translate-y-[-2px] hover:shadow-[0_8px_30px_rgba(220,38,38,0.3)]"
+                className="inline-flex items-center gap-2 px-8 py-4 bg-[#dc2626] text-white text-lg font-semibold rounded-xl hover:bg-[#ef4444] transition-all cursor-pointer hover:translate-y-[-2px] hover:shadow-[0_8px_30px_rgba(220,38,38,0.3)]"
               >
-                {provisioning ? (
-                  <>
-                    <span className="inline-block w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                    Provisioning...
-                  </>
-                ) : (
-                  <>
-                    Deploy your claw
-                    <span className="text-xl">&rarr;</span>
-                  </>
-                )}
+                Deploy your claw
+                <span className="text-xl">&rarr;</span>
               </button>
               {error && (
                 <p className="mt-4 text-[#dc2626] text-sm">{error}</p>
