@@ -75,20 +75,6 @@ export async function createMachine(opts: {
   return res.json();
 }
 
-export async function getMachine(machineId: string): Promise<FlyMachine> {
-  const res = await fetch(
-    `${FLY_API_BASE}/apps/${appName()}/machines/${machineId}`,
-    { headers: headers() }
-  );
-
-  if (!res.ok) {
-    const body = await res.text();
-    throw new Error(`Fly API error (${res.status}): ${body}`);
-  }
-
-  return res.json();
-}
-
 export async function stopMachine(machineId: string): Promise<void> {
   const res = await fetch(
     `${FLY_API_BASE}/apps/${appName()}/machines/${machineId}/stop`,

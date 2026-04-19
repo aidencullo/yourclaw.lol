@@ -3,7 +3,9 @@
 import { useSession, signOut } from "next-auth/react";
 import { useState, useEffect, useCallback } from "react";
 
-type InstanceStatus = "none" | "created" | "started" | "stopped" | "destroying";
+// "none" when the user has no machine; otherwise whatever state string Fly
+// returns (started, stopped, created, starting, replacing, destroyed, ...).
+type InstanceStatus = "none" | string;
 
 interface MachineInfo {
   id: string;
@@ -35,7 +37,7 @@ export default function Dashboard() {
         setStatus("none");
         setMachine(null);
       } else {
-        setStatus(data.status as InstanceStatus);
+        setStatus(data.status);
         setMachine(data.machine);
       }
     } catch {
@@ -138,7 +140,7 @@ export default function Dashboard() {
           {session?.user?.image && (
             <img
               src={session.user.image}
-              alt=""
+              alt={session.user.name ? `${session.user.name}'s profile` : "Profile"}
               className="w-8 h-8 rounded-full"
             />
           )}

@@ -41,7 +41,7 @@ export async function POST() {
   } catch (err) {
     console.error("Provision error:", err);
     return NextResponse.json(
-      { error: err instanceof Error ? err.message : "Provisioning failed" },
+      { error: "Provisioning failed. Please try again." },
       { status: 500 }
     );
   }
@@ -71,7 +71,7 @@ export async function DELETE() {
   } catch (err) {
     console.error("Destroy error:", err);
     return NextResponse.json(
-      { error: err instanceof Error ? err.message : "Destroy failed" },
+      { error: "Could not destroy instance. Please try again." },
       { status: 500 }
     );
   }

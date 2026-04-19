@@ -33,7 +33,7 @@ export async function GET() {
   } catch (err) {
     console.error("Status check error:", err);
     return NextResponse.json(
-      { error: err instanceof Error ? err.message : "Status check failed" },
+      { error: "Could not check instance status." },
       { status: 500 }
     );
   }
