@@ -1,10 +1,7 @@
 import { auth } from "@/auth";
 import { listMachines } from "@/lib/fly";
+import { machineNameForUser } from "@/lib/instance";
 import { NextResponse } from "next/server";
-
-function machineNameForUser(userId: string): string {
-  return `claw-${userId.replace(/[^a-zA-Z0-9]/g, "").slice(0, 20)}`;
-}
 
 // GET /api/provision/status — check if the user has a running instance
 export async function GET() {

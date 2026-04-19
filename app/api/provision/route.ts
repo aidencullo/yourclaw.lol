@@ -1,11 +1,7 @@
 import { auth } from "@/auth";
 import { createMachine, destroyMachine, listMachines } from "@/lib/fly";
+import { machineNameForUser } from "@/lib/instance";
 import { NextResponse } from "next/server";
-
-function machineNameForUser(userId: string): string {
-  // Fly machine names must be alphanumeric + hyphens
-  return `claw-${userId.replace(/[^a-zA-Z0-9]/g, "").slice(0, 20)}`;
-}
 
 // POST /api/provision — create a new instance for the authenticated user
 export async function POST() {

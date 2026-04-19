@@ -49,12 +49,16 @@ export default function Dashboard() {
     checkStatus();
   }, [checkStatus]);
 
-  // Poll while provisioning
+  const isBooting =
+    provisioning ||
+    (machine !== null && status !== "started" && status !== "stopped");
+
+  // Poll while the machine is still booting (not just while the POST is in flight)
   useEffect(() => {
-    if (!provisioning) return;
+    if (!isBooting) return;
     const interval = setInterval(checkStatus, 3000);
     return () => clearInterval(interval);
-  }, [provisioning, checkStatus]);
+  }, [isBooting, checkStatus]);
 
   async function handleProvision() {
     setProvisioning(true);
@@ -103,10 +107,6 @@ export default function Dashboard() {
   }
 
   const firstName = session?.user?.name?.split(" ")[0] || "there";
-
-  const isBooting =
-    provisioning ||
-    (machine !== null && status !== "started" && status !== "stopped");
 
   return (
     <div className="min-h-screen bg-[#050505] text-[#e5e5e5] flex flex-col">
