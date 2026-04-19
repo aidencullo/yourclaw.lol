@@ -1,8 +1,8 @@
 "use client";
 
-import { useSession, signOut } from "next-auth/react";
-import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import { getClawId } from "@/lib/claw-id";
 
 type Status = {
   app: string;
@@ -15,7 +15,6 @@ type Status = {
 type Phase = "loading" | "provisioning" | "starting" | "ready" | "error";
 
 export default function Dashboard() {
-  const { data: session, status: authStatus } = useSession();
   const router = useRouter();
 
   const [phase, setPhase] = useState<Phase>("loading");
@@ -23,14 +22,13 @@ export default function Dashboard() {
   const [error, setError] = useState<string | null>(null);
   const provisionStarted = useRef(false);
 
-  useEffect(() => {
-    if (authStatus === "unauthenticated") router.push("/");
-  }, [authStatus, router]);
-
   // Kick off: check status; if not provisioned yet, provision once.
   useEffect(() => {
-    if (authStatus !== "authenticated" || provisionStarted.current) return;
+    if (provisionStarted.current) return;
     provisionStarted.current = true;
+
+    // Ensure claw-id cookie exists before making API calls
+    getClawId();
 
     (async () => {
       try {
@@ -47,7 +45,7 @@ export default function Dashboard() {
         setPhase("error");
       }
     })();
-  }, [authStatus]);
+  }, []);
 
   const retry = () => {
     provisionStarted.current = false;
@@ -68,15 +66,6 @@ export default function Dashboard() {
       <div className="dashboard">
         <header className="dashboard-header">
           <h1>yourclaw.lol</h1>
-          <div className="dashboard-user">
-            {session?.user?.image && (
-              <img src={session.user.image} alt="" />
-            )}
-            <span>{session?.user?.name}</span>
-            <button className="signout" onClick={() => signOut({ callbackUrl: "/" })}>
-              Sign out
-            </button>
-          </div>
         </header>
         <main className="dashboard-main">
           <div className="card">
@@ -116,12 +105,12 @@ export default function Dashboard() {
 
 function StatusRow({ phase, info }: { phase: Phase; info: Status | null }) {
   const label = {
-    loading: "Checking status…",
-    provisioning: "Provisioning your Fly.io app…",
+    loading: "Checking status...",
+    provisioning: "Provisioning your Fly.io app...",
     starting:
       info?.machine?.state && info.machine.state !== "started"
-        ? `Machine ${info.machine.state}…`
-        : "Starting machine…",
+        ? `Machine ${info.machine.state}...`
+        : "Starting machine...",
     ready: `Running in ${info?.machine?.region ?? "the cloud"}`,
     error: "Something went wrong",
   }[phase];

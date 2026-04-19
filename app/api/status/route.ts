@@ -1,18 +1,19 @@
-import { NextResponse } from "next/server";
-import { auth } from "@/auth";
+import { NextRequest, NextResponse } from "next/server";
 import { getApp, listMachines, publicHostname } from "@/lib/fly";
 import { appNameForUser } from "@/lib/instance";
 
 export const runtime = "nodejs";
 
-export async function GET() {
-  const session = await auth();
-  const email = session?.user?.email;
-  if (!email) {
-    return NextResponse.json({ error: "unauthenticated" }, { status: 401 });
+export async function GET(request: NextRequest) {
+  const clawId = request.cookies.get("claw-id")?.value;
+  if (!clawId) {
+    return NextResponse.json(
+      { error: "missing_identifier", detail: "No claw-id cookie found" },
+      { status: 400 },
+    );
   }
 
-  const appName = appNameForUser(email);
+  const appName = appNameForUser(clawId);
 
   try {
     const app = await getApp(appName);

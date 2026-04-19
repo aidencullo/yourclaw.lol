@@ -1,5 +1,4 @@
-import { NextResponse } from "next/server";
-import { auth } from "@/auth";
+import { NextRequest, NextResponse } from "next/server";
 import {
   defaultOpenClawConfig,
   ensureApp,
@@ -13,14 +12,17 @@ export const runtime = "nodejs";
 /**
  * Idempotent provisioning endpoint.
  *
- * Derives a deterministic Fly app name from the authenticated user's email,
- * ensures the app + a single machine exist, and returns the public hostname.
+ * Reads the `claw-id` cookie (a UUID set on the client) to derive a
+ * deterministic Fly app name, ensures the app + a single machine exist,
+ * and returns the public hostname.
  */
-export async function POST() {
-  const session = await auth();
-  const email = session?.user?.email;
-  if (!email) {
-    return NextResponse.json({ error: "unauthenticated" }, { status: 401 });
+export async function POST(request: NextRequest) {
+  const clawId = request.cookies.get("claw-id")?.value;
+  if (!clawId) {
+    return NextResponse.json(
+      { error: "missing_identifier", detail: "No claw-id cookie found" },
+      { status: 400 },
+    );
   }
 
   const orgSlug = process.env.FLY_ORG_SLUG;
@@ -31,7 +33,7 @@ export async function POST() {
     );
   }
 
-  const appName = appNameForUser(email);
+  const appName = appNameForUser(clawId);
 
   try {
     await ensureApp(appName, orgSlug);
