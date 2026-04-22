@@ -53,8 +53,73 @@ export async function createMachine(opts: {
           memory_mb: 256,
         },
         env: opts.env || {},
+        services: [
+          {
+            ports: [
+              { port: 443, handlers: ["tls", "http"] },
+              { port: 80, handlers: ["http"] },
+            ],
+            protocol: "tcp",
+            internal_port: 8080,
+          },
+        ],
       },
     }),
+  });
+
+  if (!res.ok) {
+    const body = await res.text();
+    throw new Error(`Fly API error (${res.status}): ${body}`);
+  }
+
+  return res.json();
+}
+
+export async function stopMachine(machineId: string): Promise<void> {
+  const res = await fetch(
+    `${FLY_API_BASE}/apps/${appName()}/machines/${machineId}/stop`,
+    { method: "POST", headers: headers() }
+  );
+
+  if (!res.ok) {
+    const body = await res.text();
+    throw new Error(`Fly API error (${res.status}): ${body}`);
+  }
+}
+
+export async function startMachine(machineId: string): Promise<void> {
+  const res = await fetch(
+    `${FLY_API_BASE}/apps/${appName()}/machines/${machineId}/start`,
+    { method: "POST", headers: headers() }
+  );
+
+  if (!res.ok) {
+    const body = await res.text();
+    throw new Error(`Fly API error (${res.status}): ${body}`);
+  }
+}
+
+export async function destroyMachine(machineId: string): Promise<void> {
+  try {
+    await stopMachine(machineId);
+  } catch {
+    // may already be stopped
+  }
+
+  const res = await fetch(
+    `${FLY_API_BASE}/apps/${appName()}/machines/${machineId}?force=true`,
+    { method: "DELETE", headers: headers() }
+  );
+
+  if (!res.ok) {
+    const body = await res.text();
+    throw new Error(`Fly API error (${res.status}): ${body}`);
+  }
+}
+
+export async function listMachines(): Promise<FlyMachine[]> {
+  const res = await fetch(`${FLY_API_BASE}/apps/${appName()}/machines`, {
+    headers: headers(),
   });
 
   if (!res.ok) {
