@@ -1,3 +1,17 @@
 name = "yourclaw-provision"
 main = "src/index.js"
 compatibility_date = "2025-10-01"
+
+[[durable_objects.bindings]]
+name = "CLAW_CONTAINER"
+class_name = "ClawContainer"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["ClawContainer"]
+
+[[containers]]
+class_name = "ClawContainer"
+image = "./Dockerfile"
+max_instances = 20
+instance_type = "dev"

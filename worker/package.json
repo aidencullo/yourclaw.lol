@@ -1,0 +1,11 @@
+{
+  "name": "yourclaw-provision",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@cloudflare/containers": "^0.0.33"
+  },
+  "devDependencies": {
+    "wrangler": "^4.0.0"
+  }
+}

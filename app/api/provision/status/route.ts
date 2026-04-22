@@ -1,5 +1,5 @@
 import { auth } from "@/auth";
-import { listMachines } from "@/lib/fly";
+import { getMachine } from "@/lib/cloudflare";
 import { machineNameForUser } from "@/lib/instance";
 import { NextResponse } from "next/server";
 
@@ -10,24 +10,20 @@ export async function GET() {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const userId = session.user.email;
-  const machineName = machineNameForUser(userId);
+  const name = machineNameForUser(session.user.email);
 
   try {
-    const machines = await listMachines();
-    const userMachine = machines.find((m) => m.name === machineName);
-
-    if (!userMachine) {
+    const m = await getMachine(name);
+    if (m.state === "stopped") {
       return NextResponse.json({ status: "none", machine: null });
     }
-
     return NextResponse.json({
-      status: userMachine.state,
+      status: m.state,
       machine: {
-        id: userMachine.id,
-        state: userMachine.state,
-        region: userMachine.region,
-        created_at: userMachine.created_at,
+        id: m.id,
+        state: m.state,
+        region: m.region,
+        created_at: m.created_at,
       },
     });
   } catch (err) {
