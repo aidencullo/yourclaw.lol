@@ -1,69 +1,56 @@
-const FLY_API = "https://api.machines.dev/v1";
-const FLY_APP = "yourclaw-instances";
+import { Container, getContainer } from "@cloudflare/containers";
 
 const CORS = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "POST, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type",
+  "Access-Control-Allow-Methods": "POST, GET, DELETE, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization",
 };
+
+export class ClawContainer extends Container {
+  defaultPort = 7681;
+  sleepAfter = "10m";
+}
 
 export default {
   async fetch(request, env) {
     if (request.method === "OPTIONS") {
       return new Response(null, { headers: CORS });
     }
-    if (request.method !== "POST") {
-      return json({ error: "Method not allowed" }, 405);
+
+    const url = new URL(request.url);
+    const name = url.searchParams.get("name");
+    if (!name) return json({ error: "missing ?name" }, 400);
+
+    const container = getContainer(env.CLAW_CONTAINER, name);
+
+    if (request.method === "POST") {
+      await container.start();
+      return json({
+        id: name,
+        name,
+        state: "started",
+        region: "auto",
+        created_at: new Date().toISOString(),
+      });
     }
 
-    const res = await fetch(`${FLY_API}/apps/${FLY_APP}/machines`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${env.FLY_API_TOKEN}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        config: {
-          image: "tsl0922/ttyd:latest",
-          guest: { cpu_kind: "shared", cpus: 1, memory_mb: 256 },
-          auto_destroy: true,
-          restart: { policy: "no" },
-          processes: [
-            {
-              name: "main",
-              entrypoint: ["ttyd"],
-              cmd: ["-W", "-p", "7681", "bash"],
-            },
-          ],
-          services: [
-            {
-              protocol: "tcp",
-              internal_port: 7681,
-              ports: [{ port: 443, handlers: ["tls", "http"] }],
-            },
-          ],
-        },
-      }),
-    });
-
-    const data = await res.json();
-    if (!res.ok) {
-      return json({ error: data.error || "Fly create failed" }, res.status);
+    if (request.method === "GET") {
+      const running = await container.isRunning().catch(() => false);
+      return json({
+        id: name,
+        name,
+        state: running ? "started" : "stopped",
+        region: "auto",
+        created_at: new Date().toISOString(),
+      });
     }
 
-    // Wait for the machine to be started before returning
-    await fetch(
-      `${FLY_API}/apps/${FLY_APP}/machines/${data.id}/wait?state=started&timeout=30`,
-      { headers: { Authorization: `Bearer ${env.FLY_API_TOKEN}` } }
-    );
+    if (request.method === "DELETE") {
+      await container.destroy().catch(() => {});
+      return json({ ok: true });
+    }
 
-    return json({
-      id: data.id,
-      name: data.name,
-      state: "started",
-      region: data.region,
-      url: `https://${FLY_APP}.fly.dev/`,
-    });
+    return json({ error: "method not allowed" }, 405);
   },
 };
 
