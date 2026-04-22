@@ -1,77 +1,22 @@
-import { auth } from "@/auth";
-import { createMachine, destroyMachine, listMachines } from "@/lib/fly";
-import { machineNameForUser } from "@/lib/instance";
+import { createMachine } from "@/lib/fly";
 import { NextResponse } from "next/server";
+import { randomUUID } from "crypto";
 
-// POST /api/provision — create a new instance for the authenticated user
 export async function POST() {
-  const session = await auth();
-  if (!session?.user?.email) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
-  const userId = session.user.email;
-  const machineName = machineNameForUser(userId);
+  const machineName = `claw-${randomUUID().slice(0, 8)}`;
 
   try {
-    // Check if user already has a machine
-    const existing = await listMachines();
-    const userMachine = existing.find((m) => m.name === machineName);
-
-    if (userMachine) {
-      return NextResponse.json({
-        machine: userMachine,
-        message: "Instance already exists",
-        alreadyExisted: true,
-      });
-    }
-
-    const machine = await createMachine({
-      name: machineName,
-      env: {
-        INSTANCE_OWNER: userId,
-      },
-    });
-
+    const machine = await createMachine({ name: machineName });
     return NextResponse.json({
-      machine,
-      message: "Instance provisioned",
-      alreadyExisted: false,
+      machineId: machine.id,
+      name: machine.name,
+      region: machine.region,
+      state: machine.state,
     });
   } catch (err) {
     console.error("Provision error:", err);
     return NextResponse.json(
-      { error: "Provisioning failed. Please try again." },
-      { status: 500 }
-    );
-  }
-}
-
-// DELETE /api/provision — destroy the user's instance
-export async function DELETE() {
-  const session = await auth();
-  if (!session?.user?.email) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
-  const userId = session.user.email;
-  const machineName = machineNameForUser(userId);
-
-  try {
-    const existing = await listMachines();
-    const userMachine = existing.find((m) => m.name === machineName);
-
-    if (!userMachine) {
-      return NextResponse.json({ error: "No instance found" }, { status: 404 });
-    }
-
-    await destroyMachine(userMachine.id);
-
-    return NextResponse.json({ message: "Instance destroyed" });
-  } catch (err) {
-    console.error("Destroy error:", err);
-    return NextResponse.json(
-      { error: "Could not destroy instance. Please try again." },
+      { error: err instanceof Error ? err.message : "Provisioning failed" },
       { status: 500 }
     );
   }

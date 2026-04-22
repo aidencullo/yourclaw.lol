@@ -14,7 +14,6 @@
   "dependencies": {
     "@anthropic-ai/sdk": "^0.87.0",
     "next": "^16.2.3",
-    "next-auth": "^5.0.0-beta.30",
     "react": "^19.2.5",
     "react-dom": "^19.2.5"
   },

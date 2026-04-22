@@ -4,11 +4,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>yourclaw.lol</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpath d='M32 8C28 8 24 12 22 18C20 24 18 28 12 30C8 31 6 34 8 38C10 42 14 43 18 42C22 41 24 38 26 34C27 32 28 30 30 30L30 48C30 52 34 52 34 48L34 30C36 30 37 32 38 34C40 38 42 41 46 42C50 43 54 42 56 38C58 34 56 31 52 30C46 28 44 24 42 18C40 12 36 8 32 8Z' fill='%23dc2626'/%3E%3C/svg%3E">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
       background: #050505;
       color: #e5e5e5;
       min-height: 100vh;
@@ -34,7 +38,7 @@
     .orb-1 {
       width: 500px;
       height: 500px;
-      background: #dc2626;
+      background: #FF5A36;
       opacity: 0.25;
       top: -150px;
       right: -50px;
@@ -44,7 +48,7 @@
     .orb-2 {
       width: 400px;
       height: 400px;
-      background: #991b1b;
+      background: #CC4529;
       opacity: 0.3;
       bottom: -100px;
       left: -50px;
@@ -55,7 +59,7 @@
     .orb-3 {
       width: 300px;
       height: 300px;
-      background: #b91c1c;
+      background: #E04A2E;
       opacity: 0.15;
       top: 40%;
       left: 55%;
@@ -84,15 +88,14 @@
 
     h1 {
       font-size: 3.5rem;
-      font-weight: 700;
+      font-weight: 500;
       color: #ffffff;
       line-height: 1.1;
-      letter-spacing: -0.03em;
+      letter-spacing: -0.04em;
       margin-bottom: 0.3rem;
     }
 
     h1 span {
-      display: block;
       font-weight: 300;
       color: #737373;
     }
@@ -108,32 +111,30 @@
     .cta {
       display: inline-flex;
       align-items: center;
-      gap: 0.6rem;
-      padding: 0.9rem 2rem;
-      background: #dc2626;
+      gap: 0.5rem;
+      padding: 0.85rem 2rem;
+      background: #FF5A36;
       color: #ffffff;
       border: none;
-      border-radius: 12px;
+      border-radius: 0;
       font-size: 1.05rem;
-      font-weight: 600;
+      font-weight: 500;
       cursor: pointer;
-      transition: all 0.25s ease;
+      transition: background 0.25s ease;
       letter-spacing: 0.01em;
     }
 
     .cta:hover {
-      background: #ef4444;
-      transform: translateY(-2px);
-      box-shadow: 0 8px 30px rgba(220, 38, 38, 0.3);
+      background: #E04A2E;
     }
 
-    .cta .arrow {
-      transition: transform 0.25s ease;
-      font-size: 1.2rem;
+    .link {
+      color: #FF8A6B;
+      text-decoration: none;
     }
 
-    .cta:hover .arrow {
-      transform: translateX(3px);
+    .link:hover {
+      text-decoration: underline;
     }
 
     .note {
@@ -141,6 +142,28 @@
       font-size: 0.8rem;
       color: #525252;
       letter-spacing: 0.03em;
+    }
+
+    .status {
+      margin-top: 1rem;
+      font-size: 0.9rem;
+      color: #FF8A6B;
+      min-height: 1.2em;
+    }
+
+    body:has(.term:not([hidden])) {
+      display: block;
+      overflow: hidden;
+    }
+
+    .term {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      border: 0;
+      z-index: 10;
+      background: #000;
     }
   </style>
 </head>
@@ -150,13 +173,39 @@
     <div class="orb orb-2"></div>
     <div class="orb orb-3"></div>
   </div>
-  <div class="container">
-    <h1>Deploy <span>your clawd</span></h1>
-    <p class="subtitle">Your own Claude instance. One click, zero config.</p>
-    <button class="cta">
-      Start building <span class="arrow">&rarr;</span>
+  <div class="container" id="landing">
+    <h1>Get a personal AI assistant</h1>
+    <p class="subtitle">Create your personal assistant, powered by <a href="https://docs.openclaw.ai" class="link">OpenClaw</a>.</p>
+    <button class="cta" id="cta">
+      Get an assistant <span>&rarr;</span>
     </button>
-    <p class="note">Your own AI infrastructure &middot; Ready in minutes</p>
+    <p class="status" id="status"></p>
+    <p class="note">Ready in seconds</p>
   </div>
+  <iframe id="term" class="term" hidden></iframe>
+  <script>
+    const btn = document.getElementById('cta');
+    const statusEl = document.getElementById('status');
+    const landing = document.getElementById('landing');
+    const term = document.getElementById('term');
+    btn.addEventListener('click', async () => {
+      btn.disabled = true;
+      btn.textContent = 'Starting...';
+      statusEl.textContent = '';
+      try {
+        const r = await fetch('https://yourclaw-provision.aidencullo.workers.dev', { method: 'POST' });
+        const d = await r.json();
+        if (!r.ok) throw new Error(d.error || 'Failed');
+        statusEl.textContent = '';
+        term.src = d.url;
+        term.hidden = false;
+        landing.hidden = true;
+      } catch (e) {
+        statusEl.textContent = 'Error: ' + e.message;
+        btn.innerHTML = 'Try again <span>&rarr;</span>';
+        btn.disabled = false;
+      }
+    });
+  </script>
 </body>
 </html>

@@ -36,7 +36,7 @@ export async function createMachine(opts: {
   region?: string;
   env?: Record<string, string>;
 }): Promise<FlyMachine> {
-  const image = process.env.FLY_MACHINE_IMAGE || "ubuntu:22.04";
+  const image = process.env.FLY_MACHINE_IMAGE || "flyio/hellofly:latest";
   const region = opts.region || process.env.FLY_DEFAULT_REGION || "iad";
 
   const res = await fetch(`${FLY_API_BASE}/apps/${appName()}/machines`, {
@@ -50,7 +50,7 @@ export async function createMachine(opts: {
         guest: {
           cpu_kind: "shared",
           cpus: 1,
-          memory_mb: 1024,
+          memory_mb: 256,
         },
         env: opts.env || {},
         services: [
@@ -100,7 +100,6 @@ export async function startMachine(machineId: string): Promise<void> {
 }
 
 export async function destroyMachine(machineId: string): Promise<void> {
-  // Stop first, then destroy
   try {
     await stopMachine(machineId);
   } catch {
