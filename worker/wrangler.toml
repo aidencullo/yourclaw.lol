@@ -12,6 +12,6 @@ new_sqlite_classes = ["ClawContainer"]
 
 [[containers]]
 class_name = "ClawContainer"
-image = "./Dockerfile"
+image = "docker.io/tsl0922/ttyd:latest"
 max_instances = 20
-instance_type = "dev"
+instance_type = "lite"

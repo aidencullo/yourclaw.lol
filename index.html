@@ -192,8 +192,13 @@
       btn.disabled = true;
       btn.textContent = 'Starting...';
       statusEl.textContent = '';
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 10000);
       try {
-        const r = await fetch('https://yourclaw-provision.aidencullo.workers.dev', { method: 'POST' });
+        const r = await fetch('https://yourclaw-provision.aidencullo.workers.dev', {
+          method: 'POST',
+          signal: controller.signal,
+        });
         const d = await r.json();
         if (!r.ok) throw new Error(d.error || 'Failed');
         statusEl.textContent = '';
@@ -201,9 +206,14 @@
         term.hidden = false;
         landing.hidden = true;
       } catch (e) {
-        statusEl.textContent = 'Error: ' + e.message;
+        const message = e.name === 'AbortError'
+          ? 'Provisioning is currently unavailable while Cloudflare Containers is being enabled for this account.'
+          : e.message;
+        statusEl.textContent = 'Error: ' + message;
         btn.innerHTML = 'Try again <span>&rarr;</span>';
         btn.disabled = false;
+      } finally {
+        clearTimeout(timeout);
       }
     });
   </script>

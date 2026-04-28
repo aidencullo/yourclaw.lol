@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "dependencies": {
-    "@cloudflare/containers": "^0.0.33"
+    "@cloudflare/containers": "^0.0.28"
   },
   "devDependencies": {
     "wrangler": "^4.0.0"
