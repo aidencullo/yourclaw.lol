@@ -18,19 +18,29 @@ export default {
     }
 
     const url = new URL(request.url);
-    const name = url.searchParams.get("name");
-    if (!name) return json({ error: "missing ?name" }, 400);
+    const path = url.pathname.replace(/\/+$/, "") || "/";
+
+    if (path.startsWith("/container/")) {
+      return proxyToContainer(request, env, path);
+    }
+
+    if (path !== "/") {
+      return json({ error: "not found" }, 404);
+    }
+
+    const name = url.searchParams.get("name") || crypto.randomUUID();
 
     const container = getContainer(env.CLAW_CONTAINER, name);
 
     if (request.method === "POST") {
-      await container.start();
+      await container.startAndWaitForPorts();
       return json({
         id: name,
         name,
         state: "started",
         region: "auto",
         created_at: new Date().toISOString(),
+        url: `${url.origin}/container/${encodeURIComponent(name)}/`,
       });
     }
 
@@ -53,6 +63,23 @@ export default {
     return json({ error: "method not allowed" }, 405);
   },
 };
+
+async function proxyToContainer(request, env, path) {
+  const [, , rawName, ...rest] = path.split("/");
+  if (!rawName) {
+    return json({ error: "missing container name" }, 400);
+  }
+
+  const name = decodeURIComponent(rawName);
+  const container = getContainer(env.CLAW_CONTAINER, name);
+  const proxiedUrl = new URL(request.url);
+  proxiedUrl.pathname = `/${rest.join("/")}`;
+  if (proxiedUrl.pathname === "/") {
+    proxiedUrl.pathname = "/";
+  }
+
+  return container.fetch(new Request(proxiedUrl, request));
+}
 
 function json(body, status = 200) {
   return new Response(JSON.stringify(body), {

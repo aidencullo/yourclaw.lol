@@ -1,5 +1,5 @@
 const WORKER_URL =
-  process.env.CLAW_WORKER_URL || "https://yourclaw-provision.workers.dev";
+  process.env.CLAW_WORKER_URL || "https://yourclaw-provision.aidencullo.workers.dev";
 
 export interface ClawContainer {
   id: string;
